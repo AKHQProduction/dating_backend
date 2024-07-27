@@ -1,3 +1,4 @@
+import logging
 from dating_backend.application.common.interactor import Interactor
 from dating_backend.application.common.user_gateway import UserReader
 from dating_backend.application.dto import UserDTO
@@ -18,5 +19,7 @@ class GetUser(Interactor[int, UserDTO]):
             full_name=user.full_name,
             username=user.username
         )
+
+        logging.debug("Get user by id", extra={"user_id": user_id.to_raw(), "user": user})
 
         return user_dto
