@@ -6,7 +6,7 @@ from dating_backend.domain.value_objects.user_id import UserId
 
 @dataclass
 class User:
-    id: UserId
+    user_id: UserId
     full_name: Optional[str]
     username: Optional[str]
     is_active: Optional[bool]
