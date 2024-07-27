@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, Field
 from typing import Optional, Union
 
 from dating_backend.domain.value_objects.user_id import UserId
@@ -9,7 +9,7 @@ class User:
     user_id: UserId
     full_name: Optional[str]
     username: Optional[str]
-    is_active: Optional[bool]
+    is_active: Optional[bool] = Field(default=True)
 
     def __hash__(self) -> int:
         return hash(self.user_id)
