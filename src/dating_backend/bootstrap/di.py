@@ -16,7 +16,7 @@ def gateway_provider() -> Provider:
     provider = Provider()
 
     provider.provide(
-        InMemoryUserGateway, scope=Scope.REQUEST, provides=AnyOf[UserReader, UserSaver]
+        InMemoryUserGateway, scope=Scope.APP, provides=AnyOf[UserReader, UserSaver]
     )
 
     return provider

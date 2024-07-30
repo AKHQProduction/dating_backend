@@ -22,8 +22,6 @@ class GetUser(Interactor[int, UserDTO]):
             user_id=user.user_id, full_name=user.full_name, username=user.username
         )
 
-        logging.debug(
-            "Get user by id", extra={"user_id": user_id.to_raw(), "user": user}
-        )
+        logging.info("Get user by id: %s", str(user_id.to_raw()))
 
         return user_dto

@@ -9,14 +9,14 @@ class InMemoryUserGateway(UserSaver, UserReader):
         self.users = {}
 
     async def save(self, user: User) -> UserDTO:
-        user_in_db = await self.users.get(user.id)
+        user_in_db = self.users.get(user.user_id)
         
         if user_in_db is not None:
             raise UserAlreadyExistsError
 
-        self.users[user.id] = user
+        self.users[user.user_id] = user
 
-        return UserDTO(id=user.id, full_name=user.full_name, username=user.username)
+        return UserDTO(user_id=user.user_id, full_name=user.full_name, username=user.username)
 
     async def by_id(self, user_id: int) -> User | None:
         return self.users.get(user_id)
