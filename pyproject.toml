@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 dishka = "^1.2.0"
-
+aiogram = "^3.10.0"
 
 [build-system]
 requires = ["poetry-core"]
