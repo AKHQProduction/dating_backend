@@ -1,17 +1,19 @@
 from dataclasses import dataclass
 import logging
-from environs import Env
+import os
+
+logger = logging.getLogger(__name__)
+
+BOT_TOKEN_ENV = "BOT_TOKEN"
+
+
+class ConfigParseError(ValueError):
+    pass
 
 
 @dataclass
 class TgBot:
     token: str
-
-    @staticmethod
-    def from_env(env: Env) -> "TgBot":
-        token = env.str("BOT_TOKEN")
-
-        return TgBot(token=token)
 
 
 @dataclass
@@ -19,12 +21,19 @@ class Config:
     tg_bot: TgBot
 
 
+def get_str_env(key: str) -> str:
+    value = os.getenv(key)
+
+    if not value:
+        logger.error("%s is not set", key)
+        raise ConfigParseError(f"{key} is not set")
+
+    return value
+
+
 def load_config() -> Config:
-    env = Env()
-    env.read_env(".env")
+    token = get_str_env(BOT_TOKEN_ENV)
 
-    config = Config(tg_bot=TgBot.from_env(env))
+    logger.info("Config successfuly loaded")
 
-    logging.info("Config successfuly loaded")
-
-    return config
+    return Config(tg_bot=TgBot(token=token))

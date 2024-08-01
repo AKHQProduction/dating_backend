@@ -8,22 +8,26 @@ from dating_backend.bootstrap.di import setup_tg_di
 from dating_backend.main.config import Config, load_config
 from dating_backend.presentation.bot.setup_handlers import setup_handlers
 
+logger = logging.getLogger(__name__)
+
+
+def setup_dispatcher(config: Config) -> Dispatcher:
+    dp = Dispatcher()
+
+    setup_dishka(container=setup_tg_di(), router=dp, auto_inject=True)
+    setup_handlers(dp)
+
+    return dp
+
 
 async def main():
     logging.basicConfig(level=logging.INFO)
 
     config: Config = load_config()
 
-    dp = Dispatcher()
     bot = Bot(token=config.tg_bot.token)
 
-    setup_dishka(container=setup_tg_di(), router=dp, auto_inject=True)
-    setup_handlers(dp)
-
-    try:
-        await dp.start_polling(bot)
-    finally:
-        await bot.session.close()
+    await setup_dispatcher(config).start_polling(bot)
 
 
 if __name__ == "__main__":
