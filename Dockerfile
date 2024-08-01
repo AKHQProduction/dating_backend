@@ -1,4 +1,4 @@
-FROM python:3.11-buster
+FROM python:3.11-slim-buster
 
 RUN pip install poetry==1.8.3
 
@@ -9,12 +9,9 @@ ENV POETRY_NO_INTERACTION=1 \
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock .env ./
-RUN touch README.md
+COPY . .
 
 RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
-
-COPY src ./src
 
 RUN poetry install 
 
