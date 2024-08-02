@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   bot:
     image: "dating_bot"
@@ -11,3 +9,26 @@ services:
     command: poetry run python -m src.dating_backend.main.bot
     env_file:
       - ".env"
+
+  db:
+    container_name: "dating_db"
+    image: postgres:13-alpine
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    env_file:
+      - ".env"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL", "pg_isready -d dating_database -U $${POSTGRES_USER}"
+        ]
+      interval: 2s
+      timeout: 60s
+      retries: 10
+      start_period: 3s
+
+volumes:
+  pg_data:
