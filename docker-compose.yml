@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  bot:
+    image: "dating_bot"
+    container_name: bot
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./bot.Dockerfile
+    command: poetry run python -m src.dating_backend.main.bot
+    env_file:
+      - ".env"

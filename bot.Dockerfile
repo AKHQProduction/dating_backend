@@ -14,5 +14,3 @@ COPY . .
 RUN poetry install --no-root && rm -rf $POETRY_CACHE_DIR
 
 RUN poetry install 
-
-ENTRYPOINT ["poetry", "run", "python", "-m", "src.dating_backend.main.bot"]
