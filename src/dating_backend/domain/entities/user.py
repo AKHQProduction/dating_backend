@@ -1,13 +1,14 @@
 from dataclasses import dataclass
 from typing import Optional, Union
 
+from dating_backend.domain.value_objects.full_name import FullName
 from dating_backend.domain.value_objects.user_id import UserId
 
 
 @dataclass
 class User:
     user_id: UserId
-    full_name: str
+    full_name: FullName
     username: Optional[str]
     is_active: Optional[bool] = True
 
