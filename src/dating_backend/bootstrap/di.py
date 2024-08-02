@@ -10,15 +10,25 @@ from dishka import (
 
 from dating_backend.application.authenticate import Authenticate
 from dating_backend.application.common.id_provider import IdProvider
+from dating_backend.application.common.uow import UoW
 from dating_backend.application.common.user_gateway import (
     UserReader,
     UserSaver,
 )
+from dating_backend.bootstrap.configs import load_all_configs
 from dating_backend.domain.value_objects.user_id import UserId
 from dating_backend.infrastructure.auth.raw_id_provider import RawIdProvider
 from dating_backend.infrastructure.gateway.in_memory import InMemoryUserGateway
 
 from aiogram.types import TelegramObject, User
+
+from dating_backend.infrastructure.persistence.config import DBConfig
+from dating_backend.infrastructure.persistence.provider import (
+    get_async_session,
+    get_async_sessionmaker,
+    get_engine,
+)
+from dating_backend.infrastructure.persistence.uow import SAUnitOfWork
 
 
 def gateway_provider() -> Provider:
@@ -30,6 +40,22 @@ def gateway_provider() -> Provider:
         provides=AnyOf[UserReader, UserSaver],
     )
 
+    provider.provide(
+        SAUnitOfWork,
+        scope=Scope.REQUEST,
+        provides=UoW,
+    )
+
+    return provider
+
+
+def db_provider() -> Provider:
+    provider = Provider()
+
+    provider.provide(get_engine, scope=Scope.APP)
+    provider.provide(get_async_sessionmaker, scope=Scope.APP)
+    provider.provide(get_async_session, scope=Scope.REQUEST)
+
     return provider
 
 
@@ -37,6 +63,16 @@ def interactor_provider() -> Provider:
     provider = Provider()
 
     provider.provide(Authenticate, scope=Scope.REQUEST)
+
+    return provider
+
+
+def config_provider() -> Provider:
+    provider = Provider()
+
+    config = load_all_configs()
+
+    provider.provide(lambda: config.db, scope=Scope.APP, provides=DBConfig)
 
     return provider
 
@@ -57,6 +93,8 @@ def setup_providers() -> list[Provider]:
     providers = [
         gateway_provider(),
         interactor_provider(),
+        db_provider(),
+        config_provider(),
     ]
 
     return providers
