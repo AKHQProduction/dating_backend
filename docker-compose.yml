@@ -9,8 +9,10 @@ services:
     command: poetry run python -m src.dating_backend.main.bot
     env_file:
       - ".env"
-
-  db:
+    volumes:
+      - ./src/dating_backend/infrastructure/persistence/alembic/migrations/versions:/app/src/dating_backend/infrastructure/persistence/alembic/migrations/versions 
+      
+  dating_db:
     container_name: "dating_db"
     image: postgres:16-alpine
     restart: always
@@ -20,14 +22,11 @@ services:
       - "5432:5432"
     env_file:
       - ".env"
-    environment:
-      POSTGRES_DB: $POSTGRES_DB
-      POSTGRES_USER: $POSTGRES_USER
-      POSTGRES_PASSWORD: $POSTGRES_PASSWORD
     healthcheck:
       test:
         [
-          "CMD-SHELL", "pg_isready -d dating_database -U $${POSTGRES_USER}"
+          "CMD-SHELL",
+          "pg_isready -d dating_database -U ${POSTGRES_USER}"
         ]
       interval: 2s
       timeout: 60s

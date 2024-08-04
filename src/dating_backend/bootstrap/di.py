@@ -18,10 +18,10 @@ from dating_backend.application.common.user_gateway import (
 from dating_backend.bootstrap.configs import load_all_configs
 from dating_backend.domain.value_objects.user_id import UserId
 from dating_backend.infrastructure.auth.raw_id_provider import RawIdProvider
-from dating_backend.infrastructure.gateway.in_memory import InMemoryUserGateway
 
 from aiogram.types import TelegramObject, User
 
+from dating_backend.infrastructure.gateway.user import UserGateway
 from dating_backend.infrastructure.persistence.config import DBConfig
 from dating_backend.infrastructure.persistence.provider import (
     get_async_session,
@@ -35,8 +35,8 @@ def gateway_provider() -> Provider:
     provider = Provider()
 
     provider.provide(
-        InMemoryUserGateway,
-        scope=Scope.APP,
+        UserGateway,
+        scope=Scope.REQUEST,
         provides=AnyOf[UserReader, UserSaver],
     )
 
